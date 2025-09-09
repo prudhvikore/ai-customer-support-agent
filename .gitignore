@@ -1,0 +1,25 @@
+# Env files
+*.env
+!*.env.example
+
+# Node dependencies
+server/node_modules/
+client/node_modules/
+
+# Build outputs
+client/dist/
+server/dist/
+
+# Logs
+*.log
+logs/
+
+# Docker
+docker-compose.override.yml
+docker-compose.override.yaml
+docker-data/
+*.pid
+
+#OS
+.DS_Store
+Thumbs.db

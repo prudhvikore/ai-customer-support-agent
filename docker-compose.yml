@@ -1,0 +1,36 @@
+services:
+  # -----------------------
+  # Backend (Node/Express)
+  # -----------------------
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    env_file:
+      - ./server/.env
+    ports:
+      - "4000:4000"
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  # -----------------------
+  # Frontend (React built & served)
+  # -----------------------
+  # client:
+  #   build:
+  #     context: ./client
+  #     dockerfile: Dockerfile
+  #   environment:
+  #     - VITE_API_BASE=http://server:4000   # container-to-container communication
+  #   ports:
+  #     - "5173:4173"   # host:container (client Dockerfile serves on 4173)
+  #   depends_on:
+  #     - server
+  #   restart: unless-stopped
+  #   networks:
+  #     - app-network
+
+networks:
+  app-network:
+    driver: bridge
