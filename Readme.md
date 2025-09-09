@@ -65,8 +65,6 @@ npm install
 npm start      # Runs on http://localhost:3001 by default
 ```
 
----
-
 ## 💻 Frontend Usage
 
 - Start locally with `npm start` in `client/`
