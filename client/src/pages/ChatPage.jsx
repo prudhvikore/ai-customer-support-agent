@@ -97,6 +97,7 @@ export default function ChatPage() {
         content: res.data.reply || "(no reply)",
       };
       setMessages((s) => [...s, reply]);
+      setTyping(false);
 
       await fetchConversations();
     } catch (error) {
@@ -104,9 +105,7 @@ export default function ChatPage() {
         ...s,
         { role: "assistant", content: "Error: could not reach server" },
       ]);
-    } finally {
-      setTyping(false);
-    }
+    };
   };
 
   return (
