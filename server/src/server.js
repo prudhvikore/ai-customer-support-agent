@@ -18,7 +18,7 @@ export default function createApp() {
   app.use(cors({
     origin: [
       "http://localhost:5173",
-      "https://support-client.netlify.app"
+      "https://unique-hotteok-c74ae7.netlify.app"
     ],
     credentials: true
   }));
