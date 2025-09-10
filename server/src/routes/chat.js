@@ -131,7 +131,6 @@ router.post(
         .lean();
 
       res.json({ chatId, messages });
-      console.log(mesages)
     } catch (err) {
       next(err);
     }
