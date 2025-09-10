@@ -1,0 +1,82 @@
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react"; // 👁️ icons
+import { useAuth } from "../context/useAuth.js";
+
+export default function LoginPage() {
+  const { login } = useAuth();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [err, setErr] = useState(null);
+  const navigate = useNavigate();
+
+  const submit = async (e) => {
+    e.preventDefault();
+    setErr(null);
+    setLoading(true);
+    try {
+      await login(email, password);
+      navigate("/");
+    } catch (error) {
+      setErr(error.response?.data?.message || error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen w-full flex justify-center items-center bg-gradient-to-r from-slate-900 to-slate-800 text-white p-4 sm:p-6">
+      <div className="max-w-md w-full bg-slate-900/60 backdrop-blur-md rounded-2xl p-8 shadow-lg">
+        <h2 className="text-2xl font-semibold mb-4">Welcome</h2>
+        <form onSubmit={submit} className="space-y-4">
+          <div>
+            <label className="block text-sm">Email</label>
+            <input
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              type="email"
+              className="mt-1 w-full rounded-md bg-slate-800/40 p-2 outline-none"
+            />
+          </div>
+
+          <div className="relative">
+            <label className="block text-sm">Password</label>
+            <input
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              type={showPassword ? "text" : "password"}
+              className="mt-1 w-full rounded-md bg-slate-800/40 p-2 pr-10 outline-none"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-2 top-8 text-gray-400 hover:text-gray-200"
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
+
+          {err && <div className="text-red-400 text-sm">{err}</div>}
+
+          <button
+            disabled={loading}
+            className="w-full py-2 rounded-md bg-indigo-500 hover:bg-indigo-600 disabled:opacity-60"
+          >
+            {loading ? "Logging in..." : "Log in"}
+          </button>
+        </form>
+
+        <p className="mt-4 text-sm text-slate-300">
+          Don't have an account?{" "}
+          <Link to="/signup" className="text-indigo-400 underline">
+            Sign up
+          </Link>
+        </p>
+      </div>
+    </div>
+  );
+}

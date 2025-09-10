@@ -126,7 +126,7 @@ router.post(
       }
 
       const messages = await Message.find({ user: userId, chatId })
-        .sort({ createdAt: -1 })
+        .sort({ createdAt: 1 })
         .limit(limit || 50)
         .lean();
 
