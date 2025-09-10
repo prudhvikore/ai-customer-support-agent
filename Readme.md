@@ -193,3 +193,14 @@ docker-compose down
   { "messages": "Returns chat history list...." }
   ```
 
+- **GET /chat/conversations**  
+  Headers: `Authorization: Bearer <jwt_token>`
+  Request:  
+  ```json
+  { "userId": "User123" }
+  ```
+  Response:  
+  ```json
+  { "messages": "Returns conversations list...." }
+  ```
+

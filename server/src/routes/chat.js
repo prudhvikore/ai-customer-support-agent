@@ -2,6 +2,7 @@ import express from "express";
 import axios from "axios";
 import Joi from "joi";
 import config from "../config.js";
+import mongoose from "mongoose";
 
 import logger from "../logger.js";
 import auth from "../middlewares/auth.js";
@@ -136,5 +137,41 @@ router.post(
     }
   }
 );
+
+/**
+ * GET /chat/conversations
+ * Returns all unique chatIds with chatName for the user
+ */
+router.get("/conversations", auth, async (req, res, next) => {
+  try {
+    const { sub: userId } = req.user;
+
+    const chats = await Message.aggregate([
+      { $match: { user: new mongoose.Types.ObjectId(userId) } },
+      {
+        $group: {
+          _id: "$chatId",
+          chatName: { $first: "$chatName" },
+          lastUpdated: { $max: "$updatedAt" },
+        },
+      },
+      { $sort: { lastUpdated: -1 } },
+      {
+        $project: {
+          _id: 0,
+          chatId: "$_id",
+          chatName: 1,
+          lastUpdated: 1,
+        },
+      },
+    ]);
+
+    res.json(chats); 
+  } catch (err) {
+    next(err);
+  }
+});
+
+
 
 export default router;
