@@ -1,101 +1,119 @@
 import express from "express";
-import jwt from "jsonwebtoken";
 import axios from "axios";
-import Message from "../models/Message.js";
-import User from "../models/User.js";
+import Joi from "joi";
 import config from "../config.js";
+
+import logger from "../logger.js";
+import auth from "../middlewares/auth.js";
+import validate from "../middlewares/validate.js";
+
+import Message from "../models/Message.js";
 
 const router = express.Router();
 
-// auth middleware
-const auth = async (req, res, next) => {
-  const header = req.headers.authorization;
-  if (!header) return res.status(401).json({ error: "No token" });
-  const token = header.split(" ")[1];
-  try {
-    const data = jwt.verify(token, config.jwtSecret);
-    const user = await User.findById(data.id);
-    if (!user) return res.status(402).json({ error: "Invalid token" });
-    req.user = user;
-    next();
-  } catch (err) {
-    return res.status(401).json({ error: "Invalid token" });
-  }
-};
+const sendMessageSchema = Joi.object({
+  body: Joi.object({
+    message: Joi.string().min(1).max(2000).required(),
+    role: Joi.string().valid("user", "assistant").default("user"),
+  }),
+});
 
-// send message -> call OpenRouter -> save both user message and assistant reply
-router.post("/send", auth, async (req, res) => {
+const listMessagesSchema = Joi.object({
+  query: Joi.object({
+    limit: Joi.number().integer().min(1).max(100).default(20),
+  }),
+});
+
+/**
+ * POST /chat/message
+ * Stores a new message
+ * Returns the assistant message
+ */
+router.post("/send", auth,validate(sendMessageSchema), async (req, res, next) => {
   try {
+
+    const { sub: userId } = req.user;
     const { message } = req.body;
-    if (!message) return res.status(400).json({ error: "Missing message" });
 
-    // save user message
-    const userMsg = new Message({
-      user: req.user._id,
+    if (!message) {
+      return res.status(400).json({ error: "Missing message" });
+    }
+
+    const userMsg = await Message.create({
+      user: userId,
       role: "user",
       content: message,
     });
-    await userMsg.save();
 
-    // build OpenRouter request
+    logger.info({ userId, msgId: userMsg._id }, "chat.user_message_saved");
+
     const payload = {
       model: "gpt-4o-mini",
       messages: [
-        {
-          role: "system",
-          content: "You are a helpful customer support assistant.",
-        },
-        // optionally load last N messages for context
+        { role: "system", content: "You are a helpful customer support assistant." },
         { role: "user", content: message },
       ],
     };
 
     const orRes = await axios.post(
-      "https://openrouter.ai/v1/chat/completions",
+      config.openrouterApi,
       payload,
       {
         headers: {
           Authorization: `Bearer ${config.openrouterApiKey}`,
           "Content-Type": "application/json",
         },
-        timeout: 30000,
+        timeout: 3000,
       }
     );
 
-    // Extract assistant reply — adjust based on actual OpenRouter response shape
     const assistantText =
       (orRes.data?.choices && orRes.data.choices[0]?.message?.content) ||
       orRes.data?.output ||
       JSON.stringify(orRes.data);
 
-    // save assistant message
-    const assistantMsg = new Message({
-      user: req.user._id,
+    const assistantMsg = await Message.create({
+      user: userId,
       role: "assistant",
       content: assistantText,
     });
-    await assistantMsg.save();
+
+    logger.info({ userId, msgId: assistantMsg._id }, "chat.assistant_message_saved");
 
     res.json({ reply: assistantText });
   } catch (err) {
-    console.error("chat/send error", err?.response?.data || err.message || err);
-    res
-      .status(500)
-      .json({ error: "AI error", details: err?.response?.data || err.message });
+    logger.error(
+      { err: err?.response?.data || err.message, stack: err.stack },
+      "chat.send_failed"
+    );
+    next(err);
   }
 });
 
-// history
-router.get("/history", auth, async (req, res) => {
-  try {
-    const messages = await Message.find({ user: req.user._id })
-      .sort({ createdAt: 1 })
-      .lean();
-    res.json({ messages });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Server error" });
+
+/**
+ * GET /chat/messages
+ * Fetches last N messages of the authenticated user
+ */
+router.get(
+  "/messages",
+  auth,
+  validate(listMessagesSchema),
+  async (req, res, next) => {
+    try {
+      const { sub: userId } = req.user;
+      const limit = parseInt(req.query.limit, 10) || 20;
+
+      const messages = await Message.find({ user: userId })
+        .sort({ createdAt: -1 })
+        .limit(limit)
+        .lean();
+
+      res.json({ messages });
+    } catch (err) {
+      next(err);
+    }
   }
-});
+);
 
 export default router;
