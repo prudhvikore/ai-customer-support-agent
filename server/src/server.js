@@ -15,7 +15,13 @@ export default function createApp() {
 
   app.use(pinoHttp({ logger }));
 
-  app.use(cors());
+  app.use(cors({
+    origin: [
+      "http://localhost:5173",
+      "https://support-client.netlify.app"
+    ],
+    credentials: true
+  }));
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
