@@ -32,7 +32,10 @@ export default function ChatPage() {
             content: x.content,
           })) || [];
 
-        setMessages(resMessages);
+        setMessages((prev) => {
+          if (prev.length > resMessages.length) return prev;
+          return resMessages;
+        });
       } catch (err) {
         console.error("Failed to load messages:", err);
       }
