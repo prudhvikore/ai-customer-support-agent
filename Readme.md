@@ -37,9 +37,12 @@ A **full-stack AI-powered customer support agent** project.
 │   ├── public/
 │   └── Dockerfile
 ├── src/              # Express backend
-│   ├── routes/
+│   ├── middlewares/
 │   ├── models/
-│   ├── controllers/
+│   ├── routes/
+|   |── config.js
+|   |── index.js/
+|   |── logger.js/
 │   └── server.js
 ├── docker-compose.yml
 └── README.md
@@ -143,7 +146,7 @@ docker-compose down
   ```
   Response:  
   ```json
-  { "token": "<jwt_token>" }
+  { "id": "user_id", "username": "User", "email": "test@mail.com" }
   ```
 
 - **POST /auth/login**  
@@ -156,9 +159,19 @@ docker-compose down
   { "token": "<jwt_token>" }
   ```
 
+- **GET /auth/me**  
+  Request:  
+  ```json
+  { "id": "user_id", "username": "User", "email": "test@mail.com" }
+  ```
+  Response:  
+  ```json
+  { "id": "user_id", "username": "User", "email": "test@mail.com" }
+  ```
+
 ### Chat
 
-- **POST /chat**  
+- **POST /chat/send**  
   Headers: `Authorization: Bearer <jwt_token>`  
   Request:  
   ```json
@@ -169,11 +182,14 @@ docker-compose down
   { "reply": "AI generated response..." }
   ```
 
-### History
-
-- **GET /history**  
-  Headers: `Authorization: Bearer <jwt_token>`  
+- **GET /chat/messages**  
+  Headers: `Authorization: Bearer <jwt_token>`
+  Request:  
+  ```json
+  { "userId": "User123" }
+  ```
   Response:  
-  Returns chat history list.
-
+  ```json
+  { "messages": "Returns chat history list...." }
+  ```
 
