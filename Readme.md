@@ -32,20 +32,33 @@ A **full-stack AI-powered customer support agent** project.
 
 ```
 .
-├── client/           # React frontend
-│   ├── src/
+├── client/                # React frontend
 │   ├── public/
+│   ├── src/
+│   │   ├── api/           # API calls
+│   │   ├── context/       # React context providers
+│   │   ├── components/    # Reusable UI components
+│   │   ├── pages/         # Page-level components
+│   │   ├── App.jsx
+│   │   ├── config.js
+│   │   ├── index.css
+│   │   └── main.jsx
 │   └── Dockerfile
-├── src/              # Express backend
-│   ├── middlewares/
-│   ├── models/
-│   ├── routes/
-|   |── config.js
-|   |── index.js/
-|   |── logger.js/
-│   └── server.js
+│
+├── server/                # Express backend
+│   ├── src/
+│   │   ├── middlewares/
+│   │   ├── models/
+│   │   ├── routes/
+│   │   ├── config.js
+│   │   ├── index.js
+│   │   ├── logger.js
+│   │   └── server.js
+│   └── Dockerfile
+│
 ├── docker-compose.yml
 └── README.md
+
 ```
 
 ---
@@ -201,6 +214,6 @@ docker-compose down
   ```
   Response:  
   ```json
-  { "messages": "Returns conversations list...." }
+  { "messages": "Returns chat history list...." }
   ```
 

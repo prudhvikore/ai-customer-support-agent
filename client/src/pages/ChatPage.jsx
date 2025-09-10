@@ -15,7 +15,6 @@ export default function ChatPage() {
 
   const messagesEndRef = useRef(null);
 
-  // Load messages whenever a conversation is selected
   useEffect(() => {
     if (!selectedConvo) {
       setMessages([]);
@@ -33,7 +32,7 @@ export default function ChatPage() {
             content: x.content,
           })) || [];
 
-        setMessages(resMessages); // pass as array
+        setMessages(resMessages);
       } catch (err) {
         console.error("Failed to load messages:", err);
       }
@@ -42,14 +41,12 @@ export default function ChatPage() {
     fetchMessages();
   }, [selectedConvo?.chatId]);
 
-  // Scroll to bottom when messages change
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
 
-  // Start a new chat
   const startNewChat = () => {
     const newChat = {
       chatId: uuidv4(),
@@ -61,7 +58,6 @@ export default function ChatPage() {
     setMessages([]);
   };
 
-  // Send a message
   const send = async (e) => {
     e?.preventDefault();
     if (!input.trim()) return;
@@ -72,7 +68,6 @@ export default function ChatPage() {
     if (!chatId) chatId = uuidv4();
     if (!chatName) chatName = "New Chat";
 
-    // If it's the first message in a new chat, set chatName from the message
     if (chatName === "New Chat" && input.trim()) {
       chatName = input.length > 20 ? input.slice(0, 20) + "..." : input;
     }
@@ -95,12 +90,10 @@ export default function ChatPage() {
       };
       setMessages((s) => [...s, reply]);
 
-      // Update chatName in state after first message
       if (selectedConvo?.chatName === "New Chat") {
         setSelectedConvo((prev) => ({ ...prev, chatName }));
       }
 
-      // Refresh conversations list in sidebar
       await fetchConversations();
     } catch (error) {
       setMessages((s) => [
@@ -198,8 +191,14 @@ export default function ChatPage() {
 
             {typing && (
               <div className="flex justify-center">
-                <div className="w-full max-w-4xl text-sm text-slate-300 mt-2">
-                  Assistant is typing…
+                <div className="w-full max-w-4xl">
+                  <div className="flex justify-start">
+                    <div className="flex items-center space-x-2 bg-slate-800/40 px-4 py-2 rounded-xl max-w-xs">
+                      <div className="w-2 h-2 rounded-full bg-slate-300 animate-bounce"></div>
+                      <div className="w-2 h-2 rounded-full bg-slate-300 animate-bounce [animation-delay:-0.2s]"></div>
+                      <div className="w-2 h-2 rounded-full bg-slate-300 animate-bounce [animation-delay:-0.4s]"></div>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}

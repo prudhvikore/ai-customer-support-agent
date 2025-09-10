@@ -13,7 +13,7 @@ export const AuthProvider = ({ children }) => {
     }
   });
 
-  const [conversations, setConversations] = useState([]); // ✅ store chats here
+  const [conversations, setConversations] = useState([]);
   const navigate = useNavigate();
 
   const fetchUser = async () => {
@@ -48,9 +48,8 @@ export const AuthProvider = ({ children }) => {
 
     localStorage.setItem("token", token);
 
-    // get user details
     const me = await fetchUser();
-    if (me) await fetchConversations(); // ✅ fetch chats after login
+    if (me) await fetchConversations();
     return me;
   };
 
@@ -60,9 +59,8 @@ export const AuthProvider = ({ children }) => {
 
     localStorage.setItem("token", token);
 
-    // get user details
     const me = await fetchUser();
-    if (me) await fetchConversations(); // ✅ fetch chats after signup
+    if (me) await fetchConversations();
     return me;
   };
 
@@ -70,11 +68,10 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     setUser(null);
-    setConversations([]); // ✅ clear chats
+    setConversations([]);
     navigate("/login");
   };
 
-  // restore user + conversations on app load
 useEffect(() => {
   const token = localStorage.getItem("token");
   if (token) {
@@ -96,11 +93,11 @@ useEffect(() => {
     <AuthContext.Provider
       value={{
         user,
-        conversations, // ✅ expose conversations
+        conversations,
         login,
         signup,
         logout,
-        fetchConversations, // optional: to refresh sidebar manually
+        fetchConversations,
       }}
     >
       {children}
