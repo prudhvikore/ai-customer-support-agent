@@ -65,11 +65,16 @@ export default function ChatPage() {
     let chatId = selectedConvo?.chatId;
     let chatName = selectedConvo?.chatName;
 
-    if (!chatId) chatId = uuidv4();
-    if (!chatName) chatName = "New Chat";
-
-    if (chatName === "New Chat" && input.trim()) {
+    if (!chatId) {
+      chatId = uuidv4();
       chatName = input.length > 20 ? input.slice(0, 20) + "..." : input;
+
+      setSelectedConvo({
+        chatId,
+        chatName,
+        messages: [],
+        lastUpdated: new Date().toISOString(),
+      });
     }
 
     const userMsg = { role: "user", content: input };
@@ -89,10 +94,6 @@ export default function ChatPage() {
         content: res.data.reply || "(no reply)",
       };
       setMessages((s) => [...s, reply]);
-
-      if (selectedConvo?.chatName === "New Chat") {
-        setSelectedConvo((prev) => ({ ...prev, chatName }));
-      }
 
       await fetchConversations();
     } catch (error) {
