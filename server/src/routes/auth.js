@@ -7,6 +7,7 @@ import logger from "../logger.js";
 import validate from "../middlewares/validate.js";
 import User from "../models/User.js";
 import config from "../config.js";
+import auth from "../middlewares/auth.js"
 
 const router = express.Router();
 
@@ -112,7 +113,7 @@ router.post("/login", validate(loginSchema), async (req, res, next) => {
 /**
  * GET /auth/me
  */
-router.get("/me", (req, res) => {
+router.get("/me", auth, (req, res) => {
   if (!req.user) return res.status(401).json({ message: "Unauthorized" });
 
   const { sub: id, username, email } = req.user;
