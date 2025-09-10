@@ -2,7 +2,7 @@
 
 A **full-stack AI-powered customer support agent** project.
 
-- **Frontend:** React (TypeScript)
+- **Frontend:** React (Javascript)
 - **Backend:** Express.js, MongoDB, JWT, OpenRouter
 
 ---
