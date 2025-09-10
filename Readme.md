@@ -10,21 +10,19 @@ A **full-stack AI-powered customer support agent** project.
 ## 🏗️ Tech Stack
 
 - **Frontend**
-  - React (TypeScript)
+  - React (Javascript)
   - React Router
-  - React Testing Library (unit tests)
-  - Tailwind CSS (optional)
+  - Tailwind CSS
 - **Backend**
-  - Node.js v18 (Express.js)
-  - MongoDB (local or Atlas)
+  - Node.js (Express.js)
+  - MongoDB Atlas
   - JWT authentication
   - bcrypt password hashing
   - OpenRouter AI integration
 - **DevOps**
   - Docker & Docker Compose
-  - Multi-stage builds for frontend
-  - Netlify / Vercel (frontend deployment)
-  - Render / Railway / AWS (backend deployment)
+  - Netlify (frontend deployment)
+  - Render (backend deployment)
 
 ---
 
@@ -35,10 +33,10 @@ A **full-stack AI-powered customer support agent** project.
 ├── client/                # React frontend
 │   ├── public/
 │   ├── src/
-│   │   ├── api/           # API calls
-│   │   ├── context/       # React context providers
-│   │   ├── components/    # Reusable UI components
-│   │   ├── pages/         # Page-level components
+│   │   ├── api/           
+│   │   ├── context/      
+│   │   ├── components/    
+│   │   ├── pages/         
 │   │   ├── App.jsx
 │   │   ├── config.js
 │   │   ├── index.css
@@ -70,7 +68,7 @@ A **full-stack AI-powered customer support agent** project.
 Create `client/.env`:
 
 ```env
-REACT_APP_API_BASE=http://localhost:3000
+VITE_API_BASE=http://localhost:3000
 ```
 
 ### ▶️ Running Frontend Locally
@@ -78,7 +76,7 @@ REACT_APP_API_BASE=http://localhost:3000
 ```sh
 cd client
 npm install
-npm start      # Runs on http://localhost:3001 by default
+npm start      # Runs on http://localhost:5173 by default
 ```
 
 ## 💻 Frontend Usage
@@ -86,7 +84,6 @@ npm start      # Runs on http://localhost:3001 by default
 - Start locally with `npm start` in `client/`
 - After login, you can:
   - Send chat messages (calls `/chat`)
-  - View chat history (`/history`)
   - Health check backend (`/`)
 
 ---
@@ -112,7 +109,7 @@ OPENROUTER_API_BASE=https://openrouter.ai/v1
 ```sh
 cd src
 npm install
-npm run dev    # Start with nodemon
+npm run dev    # Starts with nodemon
 npm start      # Production mode
 ```
 
