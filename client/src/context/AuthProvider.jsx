@@ -72,22 +72,20 @@ export const AuthProvider = ({ children }) => {
     navigate("/login");
   };
 
-useEffect(() => {
-  const token = localStorage.getItem("token");
-  if (token) {
-    (async () => {
-      let me = user;
-      if (!me) {
-        me = await fetchUser();
-      }
-      if (me) {
-        await fetchConversations();
-      }
-    })();
-  }
-}, []);
-
-  
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      (async () => {
+        let me = user;
+        if (!me) {
+          me = await fetchUser();
+        }
+        if (me) {
+          await fetchConversations();
+        }
+      })();
+    }
+  }, []);
 
   return (
     <AuthContext.Provider
