@@ -75,7 +75,7 @@ export default function ChatPage() {
         messages: [],
         lastUpdated: new Date().toISOString(),
       });
-    } else if (chatName === "New Chat"{
+    } else if (chatName === "New Chat") {
       chatName = input.length > 20 ? input.slice(0, 20) + "..." : input;
       setSelectedConvo((prev)=>({
         ...prev,
